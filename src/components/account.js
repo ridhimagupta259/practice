@@ -6,14 +6,90 @@ import {
   View,
   Image,
   TouchableOpacity,
+  TouchableHighlight,
+  Alert,
+  FlatList,
 } from 'react-native';
-import {FlatList} from 'react-native-gesture-handler';
+import Modal from 'react-native-modal';
+import ImagePicker from 'react-native-image-picker';
+import {RNCamera} from 'react-native-camera';
 class Account extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      filePath: {},
+      filedata: '',
+      fileuri: '',
+      modalVisible: false,
+      newimg: '',
+      newtitleimg: require('../assets/login.png'),
+      titleImagepath: require('../assets/login.png'),
+      DATA: [
+        {
+          picture: require('../assets/persona.png'),
+          textList: 'Person A',
+        },
+        {
+          picture: require('../assets/personb.png'),
+          textList: 'Person B',
+        },
+        {
+          picture: require('../assets/personc.png'),
+          textList: 'Person C',
+        },
+      ],
+    };
+  }
+
+  toggleModal = () => {
+    this.setState({modalVisible: !this.state.modalVisible});
+  };
+  selectFile = () => {
+    var options = {
+      title: 'Select Image',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+
+    ImagePicker.showImagePicker(options, res => {
+      console.log('Response = ', res);
+
+      if (res.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (res.error) {
+        console.log('ImagePicker Error: ', res.error);
+      } else {
+        //const source = {uri: res.uri};
+
+        this.setState({
+          filePath: res,
+          filedata: res.data,
+          fileuri: res.uri,
+        });
+      }
+    });
+  };
+  renderFileUri() {
+    if (this.state.fileuri) {
+      return (
+        <Image source={{uri: this.state.fileuri}} style={styles.imageStyle} />
+      );
+    } else {
+      return (
+        <Image
+          source={require('../assets/login.png')}
+          style={styles.imageStyle}
+        />
+      );
+    }
   }
 
   render() {
+    const {modalVisible, DATA, titleImagepath, newtitleimg} = this.state;
+    var img = <Image style={styles.imageStyle} source={titleImagepath} />;
+    //var newimg = <Image source={newtitleimg} />;
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.outercontainer}>
@@ -36,11 +112,15 @@ class Account extends React.Component {
           </View>
 
           <View style={styles.TitleImage}>
-            <TouchableOpacity>
-              <Image
-                style={styles.imageStyle}
-                source={require('../assets/login.png')}
-              />
+            <TouchableOpacity
+              onPress={() => {
+                this.toggleModal(!this.state.modalVisible);
+              }}>
+              {img}
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={this.selectFile}>
+              {this.renderFileUri()}
             </TouchableOpacity>
           </View>
         </View>
@@ -234,12 +314,68 @@ class Account extends React.Component {
             </View>
           </TouchableOpacity>
         </View>
+        <Modal
+          visible={this.state.modalVisible}
+          animationType="slide"
+          hasBackdrop={true}
+          onBackdropPress={this.toggleModal}>
+          <View style={styles.ModalMainVIew}>
+            <FlatList
+              showsHorizontalScrollIndicator={false}
+              scrollEnabled={true}
+              data={DATA}
+              renderItem={({item}) => {
+                return (
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={() => {
+                      this.setState({titleImagepath: item.picture});
+                    }}>
+                    <View style={styles.ModalFlatItemsVIew}>
+                      <View style={styles.ModalFlatInnerItemsView}>
+                        <Image
+                          source={item.picture}
+                          style={styles.ModalImagesView}
+                        />
+                        <Text style={styles.ModalTextView}>
+                          {item.textList}
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                );
+              }}
+              keyExtractor={item => item.textList}
+            />
+          </View>
+        </Modal>
       </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  ModalTextView: {
+    marginLeft: 30,
+    fontSize: 20,
+    fontWeight: '600',
+    justifyContent: 'center',
+  },
+  ModalImagesView: {height: 40, width: 40},
+  ModalFlatInnerItemsView: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  ModalFlatItemsVIew: {
+    height: 70,
+    width: '100%',
+    justifyContent: 'center',
+  },
+  ModalMainVIew: {
+    flex: 0.4,
+    backgroundColor: '#ffe680',
+    //marginTop: 50,
+  },
   container: {
     backgroundColor: '#E3DFDE',
     flex: 1,
@@ -326,6 +462,15 @@ const styles = StyleSheet.create({
     borderBottomColor: 'grey',
     borderBottomWidth: 0.5,
     marginTop: 10,
+  },
+  item: {
+    backgroundColor: '#f9c2ff',
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+  },
+  title: {
+    fontSize: 32,
   },
 });
 
