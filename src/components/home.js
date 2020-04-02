@@ -1,15 +1,52 @@
 import React from 'react';
-import {Text, StyleSheet, SafeAreaView} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  Button,
+  View,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
+import CameraRoll from '@react-native-community/cameraroll';
 class Home extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      photos: [],
+      
+    };
   }
 
+  handleButtonPress = () => {
+    CameraRoll.getPhotos({
+      first: 20,
+      assetType: 'Photos',
+    }).then(r => {
+      this.setState({photos: r.edges});
+    });
+  };
   render() {
+    
     return (
-      <SafeAreaView style={styles.container}>
-        <Text> Home </Text>
-      </SafeAreaView>
+      <View style={styles.container}>
+        <Button title="Load Images" onPress={this.handleButtonPress} />
+        <View>
+          {this.state.photos.map((p, i) => {
+            return (
+              <Image
+                key={i}
+                style={{
+                  width: 300,
+                  height: 100,
+                }}
+                source={{uri: p.node.image.uri}}
+              />
+            );
+          })}
+        </View>
+      </View>
     );
   }
 }
