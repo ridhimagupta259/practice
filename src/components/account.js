@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import Modal from 'react-native-modal';
 import ImagePicker from 'react-native-image-picker';
+import wishlist from '../components/wishlist';
 import {RNCamera} from 'react-native-camera';
 class Account extends React.Component {
   constructor(props) {
@@ -85,6 +86,7 @@ class Account extends React.Component {
       );
     }
   }
+  
 
   render() {
     const {modalVisible, DATA, titleImagepath, newtitleimg} = this.state;
@@ -375,6 +377,8 @@ const styles = StyleSheet.create({
     flex: 0.4,
     backgroundColor: '#ffe680',
     //marginTop: 50,
+    width: '100%',
+    //marginHorizontal:0,
   },
   container: {
     backgroundColor: '#E3DFDE',

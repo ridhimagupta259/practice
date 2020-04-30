@@ -1,15 +1,19 @@
 import React from 'react';
-import {Text, StyleSheet, SafeAreaView} from 'react-native';
+import {Text, StyleSheet, SafeAreaView, View} from 'react-native';
+
 class MyCart extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      password: '',
+    };
   }
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
-        <Text> mycart </Text>
-      </SafeAreaView>
+      <View>
+        
+      </View>
     );
   }
 }
@@ -18,8 +22,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#E3DFDE',
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    //justifyContent: 'center',
+    //alignItems: 'center',
   },
   textEdit: {
     fontSize: 25,
